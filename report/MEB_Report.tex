@@ -1,0 +1,121 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{graphicx} % Required for inserting images
+\usepackage{blindtext}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{amsfonts} 
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage[breaklinks=true,bookmarks=false]{hyperref}
+\usepackage{awesomebox}
+\usepackage{fancyhdr}
+\usepackage[australian]{babel}
+\usepackage{datetime}
+
+\setcounter{page}{1}
+
+\newcommand{\titlestr}{MEB and Anomaly Detection}
+
+\begin{document}
+
+\begin{titlepage}
+   \centering
+   \includegraphics[width=0.7\textwidth]{unipd_logo.png}
+
+   \vspace{1cm}
+   {\LARGE \bf{\titlestr} \par}
+
+   \vspace{.5cm}
+
+   {\LARGE {\it{Optimization for Data Science}} \par}
+
+   \vspace{2cm}
+
+   \bf{
+      Granchelli, Cristian\\
+    \texttt{ID: 2071977}\\
+    \vspace{1cm}
+    Kelahan, Cameron\\
+    \texttt{ID: 2071947}\\
+    \vspace{1cm}
+    Orellana Rios, Joan\\
+    \texttt{ID: 2081188}
+   }\\
+
+
+\end{titlepage}
+
+%\thispagestyle{empty}
+
+%%%%%%%%% ABSTRACT
+\begin{abstract}
+   The ABSTRACT is to be in fully-justified italicized text, at the top
+   of the left-hand column, below the author and affiliation
+   information. Use the word ``Abstract'' as the title, in 12-point
+   Times, boldface type, centered relative to the column, initially
+   capitalized. The abstract is to be in 10-point, single-spaced type.
+   Leave two blank lines after the Abstract, then begin the main text.
+   Abstract should be no longer than 300 words.
+\end{abstract}
+
+%%%%%%%%% BODY TEXT
+\section{Introduction}
+
+%-------------------------------------------------------------------------
+\section{Minimum Enclosing Balls}
+
+[Here is where I'd do the transition between the formulation of the problem in the introduction and how we intend to solve it using MEB]
+
+\subsection{Description of MEB}
+
+We can describe the Minimum Enclosing Ball problem in the following way: given a set of points \(\mathcal{A} = a_1, ..., a_n\) in \(d\) dimensions, the objective is to find the smallest ball \(B^n(c, \rho) \) containing all points of $\mathcal{A}$, such that:
+
+\begin{equation}
+\mathcal{A} \subseteq B^n(c, \rho)
+\end{equation}\\
+where
+
+\begin{equation}
+B^n(c, \rho) = \{x \in \mathbb{R}^n \, | \, \|x - c\| \leq \rho\}
+\end{equation}\\
+where \( c \in \mathbb{R}^n \) and \( \rho \in \mathbb{R} \) are the decision variables. We define \( c \) as the centre of the minimum enclosing ball and \( \rho \) as the radius. A sphere \(B^n(c, \rho)\) \(\subset \mathbb{R}^n\) is called an enclosing ball of \(\mathcal{A} \) if and only if \((1)\) holds.
+\\
+
+The problem of calculating an approximation to the minimum enclosing ball  of $\mathcal{A}$ can be denoted as MEB($\mathcal{A}$), which can be computed by solving the following optimization problem:
+
+\begin{align*}
+\text{($\mathcal{P}_1$)} \quad & \min_{c, \rho} \rho \\
+\text{subject to} \quad & a_i - c \leq \rho, \quad i = 1, \ldots, m\\
+\end{align*}
+
+We obtain a second optimization problem $\mathcal{P}_2$ with smooth and convex quadratic constraints, by setting \(\gamma := \rho^2 \) and squaring the constraints of $\mathcal{P}_1$.
+
+\begin{align*}
+\text{($\mathcal{P}_2$)} \quad & \min_{c, \gamma} \gamma \\
+\text{subject to} \quad & (a_i)^T a_i - 2(a_i)^T c + c^T c \leq \gamma, \quad i = 1, \ldots, m
+\end{align*}
+
+We can derive the lagrangian dual from $\mathcal{P}_2$ by adding Lagrange multiplier to each constraint.
+
+\newpage
+%-------------------------------------------------------------------------
+\subsection{References}
+
+List and number all bibliographical references in 9-point Times,
+single-spaced, at the end of your paper. When referenced in the text,
+enclose the citation number in square brackets, for
+example~\cite{Authors14}.  Where appropriate, include the name(s) of
+editors of referenced books.
+
+
+{\small
+\bibliographystyle{ieee_fullname}
+\bibliography{egbib}
+}
+
+\end{document}

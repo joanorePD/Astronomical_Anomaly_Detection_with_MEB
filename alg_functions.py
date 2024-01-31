@@ -302,7 +302,6 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=10000, step_size = "Exact"):
         alpha = 1/L
 
     for i in range(max_iterations):
-        time_start = time.time()
 
         dual_val = -phi(u, A) # We minimize the negative objective function
         dual_val_list.append(dual_val) # Keep track of the changes in the objective function across iterations

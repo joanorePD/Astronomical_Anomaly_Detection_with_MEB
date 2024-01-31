@@ -174,11 +174,10 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=10000, step_size = "Exact"):
     count_iterations = 0
     dual_val_list = []
     dual_gap_list = []
-    CPU_time = 0
+
+    start_time = time.time()
 
     m, n = A.shape
-
-    time_start = time.time()
 
     # initialize u vector
     u = np.zeros(m)
@@ -214,7 +213,6 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=10000, step_size = "Exact"):
         gap_FrankWolfe = -gradient.T @ direction_FrankWolfe 
         dual_gap_list.append(gap_FrankWolfe) 
         if gap_FrankWolfe <= epsilon:
-            CPU_time = time.time() - time_start
             break
 
         count_iterations += 1
@@ -232,6 +230,7 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=10000, step_size = "Exact"):
             max_alpha = S_set[v_index] / (1 - S_set[v_index]) # Max step-size AS
             frankwolfe_flag = False
 
+        # alpha = calculate_step_size(line_search_strategy, i, A_squared, u, Z, direction_chosen, gradient, max_alpha)
         # Step-size
         if step_size == "Harmonic":
             alpha = 2 / (i + 1) 
@@ -262,19 +261,18 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=10000, step_size = "Exact"):
             else:
                 S_set[v_index] = S_set[v_index] - alpha # alpha_V_t update
 
-    if i == max_iterations-1:
-        CPU_time = time.time() - time_start
-
     radius = np.sqrt(-dual_val)
     center = np.matmul(A.T, u)
+
+    timer = time.time() - start_time
 
     print("Center:", center)
     print("Radius:", radius)
     print("Iterations:", count_iterations)
-    print("CPU time:", CPU_time)
+    print("CPU time:", timer)
     print("Set Size:", len(S_set[np.where(S_set > 0)]))
 
-    return center, radius, count_iterations, CPU_time, dual_val_list, dual_gap_list
+    return center, radius, count_iterations, timer, dual_val_list, dual_gap_list
 
 #---------------------------------------------------------------------------#
 # Algorithm 3: Pairwise Frank-Wolfe Algorithm 
@@ -285,11 +283,9 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=10000, step_size = "Exact"):
     count_iterations = 0
     dual_val_list = []
     dual_gap_list = []
-    CPU_time = 0
+    start_time = time.time()
     
     m, n = A.shape
-
-    time_start = time.time()
 
     # initialize u vector
     u = np.zeros(m)
@@ -306,6 +302,7 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=10000, step_size = "Exact"):
         alpha = 1/L
 
     for i in range(max_iterations):
+        time_start = time.time()
 
         dual_val = -phi(u, A) # We minimize the negative objective function
         dual_val_list.append(dual_val) # Keep track of the changes in the objective function across iterations
@@ -323,7 +320,6 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=10000, step_size = "Exact"):
         gap_FrankWolfe = -gradient.T @ direction_Pairwise
         dual_gap_list.append(gap_FrankWolfe) 
         if gap_FrankWolfe <= epsilon:
-            Cpu_time = time.time() - time_start
             break
 
         count_iterations += 1
@@ -343,11 +339,15 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=10000, step_size = "Exact"):
         # Update set S
         S_set[v_index] = S_set[v_index] - alpha # alpha_V_t update
         S_set[s_index] = S_set[s_index] + alpha # alpha_S_t update
-    
-    if i == max_iterations-1:
-        CPU_time = time.time() - time_start
 
     radius = np.sqrt(-dual_val)
     center = np.matmul(A.T, u)
     
-    return center, radius, count_iterations, CPU_time, dual_val_list, dual_gap_list
+    timer = time.time() - start_time
+
+    print("Center:", center)
+    print("Radius:", radius)
+    print("Iterations:", count_iterations)
+    print("CPU time:", timer)
+    print("Set Size:", len(S_set[np.where(S_set > 0)]))
+    return center, radius, count_iterations, timer, dual_val_list, dual_gap_list

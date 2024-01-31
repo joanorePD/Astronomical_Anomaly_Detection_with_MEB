@@ -178,6 +178,8 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=10000, step_size = "Exact"):
 
     m, n = A.shape
 
+    time_start = time.time()
+
     # initialize u vector
     u = np.zeros(m)
     u[0] = 1.0
@@ -193,7 +195,6 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=10000, step_size = "Exact"):
         alpha = 1/L
 
     for i in range(max_iterations):
-        time_start = time.time()
 
         dual_val = -phi(u, A) # We minimize the negative objective function
         dual_val_list.append(dual_val) # Keep track of the changes in the objective function across iterations
@@ -231,7 +232,6 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=10000, step_size = "Exact"):
             max_alpha = S_set[v_index] / (1 - S_set[v_index]) # Max step-size AS
             frankwolfe_flag = False
 
-        # alpha = calculate_step_size(line_search_strategy, i, A_squared, u, Z, direction_chosen, gradient, max_alpha)
         # Step-size
         if step_size == "Harmonic":
             alpha = 2 / (i + 1) 
@@ -262,7 +262,9 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=10000, step_size = "Exact"):
             else:
                 S_set[v_index] = S_set[v_index] - alpha # alpha_V_t update
 
-    print(f"Dual value: {dual_val}")
+    if i == max_iterations-1:
+        CPU_time = time.time() - time_start
+
     radius = np.sqrt(-dual_val)
     center = np.matmul(A.T, u)
 
@@ -287,6 +289,8 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=10000, step_size = "Exact"):
     
     m, n = A.shape
 
+    time_start = time.time()
+
     # initialize u vector
     u = np.zeros(m)
     u[0] = 1.0
@@ -302,7 +306,6 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=10000, step_size = "Exact"):
         alpha = 1/L
 
     for i in range(max_iterations):
-        time_start = time.time()
 
         dual_val = -phi(u, A) # We minimize the negative objective function
         dual_val_list.append(dual_val) # Keep track of the changes in the objective function across iterations
@@ -340,6 +343,9 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=10000, step_size = "Exact"):
         # Update set S
         S_set[v_index] = S_set[v_index] - alpha # alpha_V_t update
         S_set[s_index] = S_set[s_index] + alpha # alpha_S_t update
+    
+    if i == max_iterations-1:
+        CPU_time = time.time() - time_start
 
     radius = np.sqrt(-dual_val)
     center = np.matmul(A.T, u)

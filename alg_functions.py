@@ -166,7 +166,7 @@ def frank_wolfe_alg_MEB(epsilon, A):
 # Algorithm 2: Away Step Frank-Wolfe Algorithm
 #---------------------------------------------------------------------------#
 
-def frankWolfe_AwayStep(A, epsilon, max_iterations=10000, step_size = "Exact"):
+def frankWolfe_AwayStep(A, epsilon, max_iterations=1000, step_size = "Exact"):
     
     count_FrankWolfe = 0
     count_AwayStep = 0
@@ -278,7 +278,7 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=10000, step_size = "Exact"):
 # Algorithm 3: Pairwise Frank-Wolfe Algorithm 
 #---------------------------------------------------------------------------#
 
-def frankWolfe_Pairwise(A, epsilon, max_iterations=10000, step_size = "Exact"):
+def frankWolfe_Pairwise(A, epsilon, max_iterations=1000, step_size = "Exact"):
 
     count_iterations = 0
     dual_val_list = []

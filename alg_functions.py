@@ -112,7 +112,7 @@ def frank_wolfe_alg_MEB(epsilon, A):
 
     start_time = time.time()
 
-    delta_l = []
+    delta_l, core_size = [], []
     # Find points alpha and beta
     distances_to_a_1 = np.linalg.norm(A - A[0], axis=1)**2 # ||a_i - a_1||^2
     alpha = np.argmax(distances_to_a_1)
@@ -123,6 +123,7 @@ def frank_wolfe_alg_MEB(epsilon, A):
     u = np.zeros(len(A))
     u[alpha], u[beta] = 0.5, 0.5
     chi = [A[alpha], A[beta]]
+    core_size.append(len(chi))
     c = u @ A
     c_hist = [c]
     mu = phi(u, A)
@@ -145,6 +146,7 @@ def frank_wolfe_alg_MEB(epsilon, A):
         if kappa not in kappa_idxs:
             kappa_idxs.append(kappa)
             chi.append(A[kappa])
+        core_size.append(len(chi))
         mu = phi(u, A)
         distances_to_c = np.linalg.norm(A - c, axis=1)**2
         kappa = np.argmax(distances_to_c)
@@ -159,7 +161,7 @@ def frank_wolfe_alg_MEB(epsilon, A):
     print("CPU time:", timer)
     print("Core Set Size:", len(chi))
 
-    return c, np.sqrt((1 + delta) * mu), k, chi, timer, delta_l
+    return c, np.sqrt((1 + delta) * mu), k, chi, timer, delta_l, core_size
 
 #---------------------------------------------------------------------------#
 # Algorithm 2: Away Step Frank-Wolfe Algorithm
@@ -177,6 +179,7 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=1000, step_size = "Exact"):
     start_time = time.time()
 
     m, n = A.shape
+    core_size = []
 
     # initialize u vector
     u = np.zeros(m)
@@ -186,6 +189,7 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=1000, step_size = "Exact"):
     S_set = np.zeros(m)
     S_set[np.where(u > 0)[0]] = 1
 
+    core_size.append(len(S_set[np.where(S_set > 0)]))
     for i in range(max_iterations):
 
         dual_val = -phi(u, A) # We minimize the negative objective function
@@ -254,6 +258,8 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=1000, step_size = "Exact"):
             else:
                 S_set[v_index] = S_set[v_index] - alpha # alpha_V_t update
 
+        core_size.append(len(S_set[np.where(S_set > 0)]))
+
     radius = np.sqrt(-dual_val)
     center = np.matmul(A.T, u)
 
@@ -265,7 +271,7 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=1000, step_size = "Exact"):
     print("CPU time:", timer)
     print("Set Size:", len(S_set[np.where(S_set > 0)]))
 
-    return center, radius, count_iterations, timer, dual_val_list, dual_gap_list
+    return center, radius, count_iterations, timer, dual_val_list, dual_gap_list, core_size
 
 #---------------------------------------------------------------------------#
 # Algorithm 3: Pairwise Frank-Wolfe Algorithm 
@@ -278,7 +284,7 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=1000, step_size = "Exact"):
     dual_gap_list = []
     
     m, n = A.shape
-
+    core_size = []
     # initialize u vector
     u = np.zeros(m)
     u[0] = 1.0
@@ -286,7 +292,7 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=1000, step_size = "Exact"):
     # Create set S containing the u values across time
     S_set = np.zeros(m)
     S_set[np.where(u > 0)[0]] = 1
-
+    core_size.append(len(S_set[np.where(S_set > 0)]))
     start_time = time.time()
 
     for i in range(max_iterations):
@@ -327,6 +333,8 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=1000, step_size = "Exact"):
         S_set[v_index] = S_set[v_index] - alpha # alpha_V_t update
         S_set[s_index] = S_set[s_index] + alpha # alpha_S_t update
 
+        core_size.append(len(S_set[np.where(S_set > 0)]))
+
     radius = np.sqrt(-dual_val)
     center = np.matmul(A.T, u)
     
@@ -337,4 +345,4 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=1000, step_size = "Exact"):
     print("Iterations:", count_iterations)
     print("CPU time:", timer)
     print("Set Size:", len(S_set[np.where(S_set > 0)]))
-    return center, radius, count_iterations, timer, dual_val_list, dual_gap_list
+    return center, radius, count_iterations, timer, dual_val_list, dual_gap_list, core_size

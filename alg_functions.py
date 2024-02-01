@@ -182,12 +182,6 @@ def frankWolfe_AwayStep(A, epsilon, max_iterations=1000, step_size = "Exact"):
     S_set = np.zeros(m)
     S_set[np.where(u > 0)[0]] = 1
 
-    if step_size == "Lipschitz":
-        H = 2 * np.matmul(A, A.T)
-        eigen_values = np.linalg.eigvalsh(H)
-        L = np.max(eigen_values)
-        alpha = 1/L
-
     for i in range(max_iterations):
 
         dual_val = -phi(u, A) # We minimize the negative objective function
@@ -289,12 +283,6 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=1000, step_size = "Exact"):
     # Create set S containing the u values across time
     S_set = np.zeros(m)
     S_set[np.where(u > 0)[0]] = 1
-
-    if step_size == "Lipschitz":
-        H = 2 * np.matmul(A, A.T)
-        eigen_values = np.linalg.eigvalsh(H)
-        L = np.max(eigen_values)
-        alpha = 1/L
 
     for i in range(max_iterations):
 

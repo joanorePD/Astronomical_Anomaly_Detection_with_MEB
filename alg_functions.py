@@ -112,6 +112,7 @@ def frank_wolfe_alg_MEB(epsilon, A):
 
     start_time = time.time()
 
+    delta_l = []
     # Find points alpha and beta
     distances_to_a_1 = np.linalg.norm(A - A[0], axis=1)**2 # ||a_i - a_1||^2
     alpha = np.argmax(distances_to_a_1)
@@ -131,6 +132,7 @@ def frank_wolfe_alg_MEB(epsilon, A):
     distances_to_c = np.linalg.norm(A - c, axis=1)**2
     kappa = np.argmax(distances_to_c)
     delta = (distances_to_c[kappa] / mu) - 1.0
+    delta_l.append(delta)
 
     # Main iteration loop
     k = 0
@@ -147,6 +149,8 @@ def frank_wolfe_alg_MEB(epsilon, A):
         distances_to_c = np.linalg.norm(A - c, axis=1)**2
         kappa = np.argmax(distances_to_c)
         delta = (distances_to_c[kappa] / mu) - 1
+        delta_l.append(delta)
+
 
     timer = time.time() - start_time
     print("Center:", c)
@@ -155,7 +159,7 @@ def frank_wolfe_alg_MEB(epsilon, A):
     print("CPU time:", timer)
     print("Core Set Size:", len(chi))
 
-    return c, np.sqrt((1 + delta) * mu), k, chi, timer
+    return c, np.sqrt((1 + delta) * mu), k, chi, timer, delta_l
 
 #---------------------------------------------------------------------------#
 # Algorithm 2: Away Step Frank-Wolfe Algorithm
@@ -272,7 +276,6 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=1000, step_size = "Exact"):
     count_iterations = 0
     dual_val_list = []
     dual_gap_list = []
-    start_time = time.time()
     
     m, n = A.shape
 
@@ -283,6 +286,8 @@ def frankWolfe_Pairwise(A, epsilon, max_iterations=1000, step_size = "Exact"):
     # Create set S containing the u values across time
     S_set = np.zeros(m)
     S_set[np.where(u > 0)[0]] = 1
+
+    start_time = time.time()
 
     for i in range(max_iterations):
 

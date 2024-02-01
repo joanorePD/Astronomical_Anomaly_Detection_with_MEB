@@ -113,29 +113,27 @@ def frank_wolfe_alg_MEB(epsilon, A):
 
     start_time = time.time()
 
-    # Compute distances and indices
+    # Find points alpha and beta
     distances_to_a_1 = np.linalg.norm(A - A[0], axis=1)**2 # ||a_i - a_1||^2
     alpha = np.argmax(distances_to_a_1)
     distances_to_a_alpha = np.linalg.norm(A - A[alpha], axis=1)**2 if alpha is not None else np.zeros(len(A)) # ||a_i - a_α||^2
     beta = np.argmax(distances_to_a_alpha)
-    #print(f"First Value in A: {A[0]}")
-    #print(f"Initial values for Alpha and Beta: {(A[alpha], A[beta])}")
-    # Initialize u, chi, c
+
+    # Initialize u, chi, c and mu
     u = np.zeros(len(A))
     u[alpha], u[beta] = 0.5, 0.5
-
     chi = [A[alpha], A[beta]]
     c = u @ A
     c_hist = [c]
     mu = phi(u, A)
-    kappa_idxs = []
 
-    # Main iteration loop
+    # Initialize kappa and delta
+    kappa_idxs = []
     distances_to_c = np.linalg.norm(A - c, axis=1)**2
     kappa = np.argmax(distances_to_c)
     delta = (distances_to_c[kappa] / mu) - 1.0
-    #print(f"Initial Delta: {delta}")
-    #print(f"Initial Mu: {mu}")
+
+    # Main iteration loop
     k = 0
     while delta > ((1 + epsilon)**2) - 1.0 and k < 1000:
         lambd = delta / (2 * (1.0 + delta))
@@ -146,8 +144,6 @@ def frank_wolfe_alg_MEB(epsilon, A):
         if kappa not in kappa_idxs:
             kappa_idxs.append(kappa)
             chi.append(A[kappa])
-        #print(f"Kappa at iteration {k}: {A[kappa]}")
-        #print(f"Delta at iteration {k}: {delta}")
         mu = phi(u, A)
         distances_to_c = np.linalg.norm(A - c, axis=1)**2
         kappa = np.argmax(distances_to_c)
